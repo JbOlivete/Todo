@@ -14,5 +14,8 @@
             <!-- <button class="insert-onsubmit" id="insertbtn">submit</button> -->
         </form>
     </div>
+    <div>
+        <?php include 'phpscript/getTask.php' ?>
+    </div>
 </body>
 </html>
