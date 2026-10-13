@@ -10,7 +10,7 @@ $taskList = $conn->query($sql);
 
 if($taskList->num_rows > 0){
     while($row = $taskList->fetch_assoc()){
-        echo "task:" . $row["Task"];
+        echo "task:" . $row["Task"] . "<br>";
     }
 }else{
     echo "no task found";
