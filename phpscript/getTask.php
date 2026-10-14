@@ -7,10 +7,9 @@ require_once("connect.php");
 $sql = "SELECT Task FROM task";
 
 $taskList = $conn->query($sql);
-
 if($taskList->num_rows > 0){
     while($row = $taskList->fetch_assoc()){
-        echo "task:" . $row["Task"] . "<br>";
+        echo $row["Task"] . "<br>";
     }
 }else{
     echo "no task found";
