@@ -1,9 +1,16 @@
 const addTask = document.getElementById("input-task");
-const insertTaskForm = document.getElementById("insert-task-form")
+const insertTaskForm = document.getElementById("insert-task-form");
 
-addTask.addEventListener('keypress', (event)=>{
-    if(event.key === 'enter'){
+addTask.addEventListener('keydown', function(event) {
+    if(event.key === 'Enter'){
         event.preventDefault();
-        insertTaskForm.submit();
+        
+        const inputValue = new FormData(insertTaskForm);
+        
+        fetch('phpscript/insertTask.php', {
+            method: 'POST',
+            body: inputValue
+        });
+        addTask.value = '';
     }
-})
+});

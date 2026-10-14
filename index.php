@@ -9,7 +9,7 @@
 </head>
 <body>
     <div class="body-center">
-        <form action="phpscript/insertTask.php" method="POST" id="insert-task-form">
+        <form id="insert-task-form">
             <input type="text" name="task" id="input-task" placeholder="task" required></input>
             <!-- <button class="insert-onsubmit" id="insertbtn">submit</button> -->
         </form>
