@@ -9,11 +9,10 @@ $sql = "SELECT Task FROM task";
 $taskList = $conn->query($sql);
 if($taskList->num_rows > 0){
     while($row = $taskList->fetch_assoc()){
-        echo $row["Task"] . "<br>";
+        $data[] = $row;
     }
-}else{
-    echo "no task found";
 }
+echo json_encode($data);
 
-$conn->close()
+$conn->close();
 ?>
