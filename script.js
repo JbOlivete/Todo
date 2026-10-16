@@ -1,6 +1,9 @@
 const addTask = document.getElementById("input-task");
 const insertTaskForm = document.getElementById("insert-task-form");
 const getTaskContainer = document.getElementById("task-container");
+const deleteModal = document.querySelector(".delete-modal");
+
+getTask();
 
 addTask.addEventListener('keydown', function(event) {
     if(addTask.value.trim() === ""){
@@ -16,9 +19,11 @@ addTask.addEventListener('keydown', function(event) {
                 body: inputValue
             });
             addTask.value = '';
+            
             setTimeout(() => {
-                getTask();
-            }, 500);
+            getTask();
+            }, 250);
+            
         }
     }
 });
@@ -37,12 +42,29 @@ function getTask(){
                 getTaskContainer.innerHTML = '<p>no task</p>';
                 return;
             }
-            let dataHolder = '';
+            let dataHolder;
             data.forEach(task => {
-                dataHolder += `<p>${task.Task}</p>`
+                dataHolder += `<div class="todo-container" id="todo-container"><p>${task.Task}</p></div>`;
             });
             getTaskContainer.innerHTML = dataHolder;
         })
 }
 
-getTask();
+getTaskContainer.addEventListener("contextmenu", (event) => {
+    const todo = event.target.closest('.todo-container');
+    if(todo){
+        event.preventDefault();
+        console.log('click');
+
+        const x = event.clientX;
+        const y = event.clientY;
+
+        console.log(`this is x ${x} and y ${y}`);
+        deleteModal.style.position = 'absolute';
+        deleteModal.style.left = `${x}px`;
+        deleteModal.style.top = `${y}px`;
+        deleteModal.style.display = 'block';
+    }
+});
+
+
