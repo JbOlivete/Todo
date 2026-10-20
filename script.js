@@ -44,17 +44,29 @@ function getTask(){
             }
             let dataHolder;
             data.forEach(task => {
-                dataHolder += `<div class="todo-container" id="todo-container"><p>${task.Task}</p></div>`;
+                dataHolder += `<div class="todo-container" id="todo-container"><p id="${task.ID}" class="task-item"> ${task.Task}</p></div>`;
             });
             getTaskContainer.innerHTML = dataHolder;
         })
 }
 
+// function deleteTask(todo){
+//     const deleteBtn = document.getElementById("delete-task-button");
+//     deleteBtn.addEventListener("click", (e) =>{
+//         fetch('phpscript/deleteTask.php',{
+//             method: 'DELETE',
+//             body: todo
+//         })
+//     })
+// }
+
 getTaskContainer.addEventListener("contextmenu", (event) => {
     const todo = event.target.closest('.todo-container');
     if(todo){
         event.preventDefault();
-        console.log('click');
+       
+        const p = todo.querySelector("p");
+        console.log(p.id);
 
         const x = event.clientX;
         const y = event.clientY;
@@ -64,6 +76,8 @@ getTaskContainer.addEventListener("contextmenu", (event) => {
         deleteModal.style.left = `${x}px`;
         deleteModal.style.top = `${y}px`;
         deleteModal.style.display = 'block';
+
+
     }
 });
 
