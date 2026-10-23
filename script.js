@@ -2,6 +2,7 @@ const addTask = document.getElementById("input-task");
 const insertTaskForm = document.getElementById("insert-task-form");
 const getTaskContainer = document.getElementById("task-container");
 const deleteModal = document.querySelector(".delete-modal");
+const deleteBtn = document.getElementById("delete-task-button");
 
 getTask();
 
@@ -50,35 +51,46 @@ function getTask(){
         })
 }
 
-// function deleteTask(todo){
-//     const deleteBtn = document.getElementById("delete-task-button");
-//     deleteBtn.addEventListener("click", (e) =>{
-//         fetch('phpscript/deleteTask.php',{
-//             method: 'DELETE',
-//             body: todo
-//         })
-//     })
-// }
+function deleteTask(todo){
+    console.log('hello from function');
+    fetch('phpscript/deleteTask.php', {
+        method: 'POST',
+        headers: {
+            'Content-type': 'application/json'
+        },
+        body: JSON.stringify({task_id: todo})
+    })
+}
 
 getTaskContainer.addEventListener("contextmenu", (event) => {
     const todo = event.target.closest('.todo-container');
+
     if(todo){
         event.preventDefault();
-       
+        //get id
         const p = todo.querySelector("p");
-        console.log(p.id);
-
+        const taskId = p.id;
+        console.log(taskId);
+        deleteBtn.dataset.taskId = taskId; 
+        //modal loc
         const x = event.clientX;
         const y = event.clientY;
-
+        
         console.log(`this is x ${x} and y ${y}`);
         deleteModal.style.position = 'absolute';
         deleteModal.style.left = `${x}px`;
         deleteModal.style.top = `${y}px`;
         deleteModal.style.display = 'block';
-
-
+        
     }
+});
+
+deleteBtn.addEventListener("click", () => {
+    const taskId = deleteBtn.dataset.taskId;
+    setTimeout(() => {
+    getTask();
+    }, 250);
+    deleteTask(taskId);
 });
 
 
