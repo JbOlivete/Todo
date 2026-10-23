@@ -17,11 +17,12 @@
     <div id="task-container" class="box-todo">
         
     </div>
+    
     <!-- modal -->
     <!-- right click on task -->
      <div class="modal hide delete-modal">
         <div>
-            <button id="delete-task">delete</button>
+            <button id="delete-task-button">delete</button>
         </div>
      </div>
 </body>
