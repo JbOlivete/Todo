@@ -3,6 +3,7 @@ const insertTaskForm = document.getElementById("insert-task-form");
 const getTaskContainer = document.getElementById("task-container");
 const deleteModal = document.querySelector(".delete-modal");
 const deleteBtn = document.getElementById("delete-task-button");
+const rightSideMenu = document.getElementById("side-menu");
 
 getTask();
 
@@ -62,6 +63,14 @@ function deleteTask(todo){
     })
 }
 
+function showModal(x,y){
+    console.log(`this is x ${x} and y ${y}`);
+    deleteModal.style.position = 'absolute';
+    deleteModal.style.left = `${x}px`;
+    deleteModal.style.top = `${y}px`;
+    deleteModal.style.display = 'block';
+}
+
 getTaskContainer.addEventListener("contextmenu", (event) => {
     const todo = event.target.closest('.todo-container');
 
@@ -75,18 +84,26 @@ getTaskContainer.addEventListener("contextmenu", (event) => {
         //modal loc
         const x = event.clientX;
         const y = event.clientY;
-        
-        console.log(`this is x ${x} and y ${y}`);
-        deleteModal.style.position = 'absolute';
-        deleteModal.style.left = `${x}px`;
-        deleteModal.style.top = `${y}px`;
-        deleteModal.style.display = 'block';
-        
+        showModal(x,y)
     }
 });
 
+getTaskContainer.addEventListener("click", (event) => {
+    rightSideMenu.style.display = 'block';
+    const todo = event.target.closest('.todo-container');
+    const taskSideMenu = document.getElementById('task-side-menu');
+    
+    if(todo){
+        const p = todo.querySelector("p");
+        const pValue = p.textContent;
+        taskSideMenu.value = pValue;
+    }
+
+})
+
 deleteBtn.addEventListener("click", () => {
     const taskId = deleteBtn.dataset.taskId;
+    deleteModal.style.display = 'none';
     setTimeout(() => {
     getTask();
     }, 250);
