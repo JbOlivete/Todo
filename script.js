@@ -4,6 +4,7 @@ const getTaskContainer = document.getElementById("task-container");
 const deleteModal = document.querySelector(".delete-modal");
 const deleteBtn = document.getElementById("delete-task-button");
 const rightSideMenu = document.getElementById("side-menu");
+const fieldSideMenu = document.getElementById("task-side-menu")
 
 getTask();
 
@@ -73,7 +74,6 @@ function showModal(x,y){
 
 getTaskContainer.addEventListener("contextmenu", (event) => {
     const todo = event.target.closest('.todo-container');
-
     if(todo){
         event.preventDefault();
         //get id
@@ -95,7 +95,10 @@ getTaskContainer.addEventListener("click", (event) => {
     
     if(todo){
         const p = todo.querySelector("p");
+        const paraId = p.id;
         const pValue = p.textContent;
+        fieldSideMenu.dataset.paraContent = pValue;
+        fieldSideMenu.dataset.paraId = paraId;
         taskSideMenu.value = pValue;
     }
 
@@ -109,5 +112,27 @@ deleteBtn.addEventListener("click", () => {
     }, 250);
     deleteTask(taskId);
 });
+// update todo
+fieldSideMenu.addEventListener("keydown", (event) => {
+    const paraContent = fieldSideMenu.dataset.paraContent;
+    const paraId = fieldSideMenu.dataset.paraId;
 
-
+    if(event.key === 'Enter'){
+        event.preventDefault();
+        const val = fieldSideMenu.value;
+        
+        if(val !== paraContent){
+            const newUpdatedTask = document.getElementById("form-side-menu");
+            const updatedTask = new FormData(newUpdatedTask);
+            updatedTask.append('Id', paraId);
+            fetch('phpscript/updateTask.php', {
+                method: 'POST',
+                body: updatedTask
+            })
+            
+            setTimeout(() => {
+            getTask();
+            }, 250);
+        }
+    }
+})
