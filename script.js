@@ -4,7 +4,8 @@ const getTaskContainer = document.getElementById("task-container");
 const deleteModal = document.querySelector(".delete-modal");
 const deleteBtn = document.getElementById("delete-task-button");
 const rightSideMenu = document.getElementById("side-menu");
-const fieldSideMenu = document.getElementById("task-side-menu")
+const fieldSideMenu = document.getElementById("task-side-menu");
+const taskCheckBox = document.getElementById("task-checkbox");
 
 getTask();
 
@@ -47,7 +48,9 @@ function getTask(){
             }
             let dataHolder;
             data.forEach(task => {
-                dataHolder += `<div class="todo-container" id="todo-container"><p id="${task.ID}" class="task-item"> ${task.Task}</p></div>`;
+                dataHolder += `<div class="todo-container" id="todo-container"> 
+                    <input type="checkbox" id="task-checkbox" name="task-checkbox" class="task-checkbox"><p id="${task.ID}" class="task-item"> ${task.Task}</p>
+                </div>`;
             });
             getTaskContainer.innerHTML = dataHolder;
         })
@@ -61,6 +64,19 @@ function deleteTask(todo){
             'Content-type': 'application/json'
         },
         body: JSON.stringify({task_id: todo})
+    })
+}
+
+function completedTask(todo, completed){
+    fetch('phpscript/completedTask.php', {
+        method: 'POST',
+        headers: {
+            'Content-type': 'application/json'
+        },
+        body: JSON.stringify({
+            task_id: todo,
+            status: completed
+        })
     })
 }
 
@@ -135,4 +151,29 @@ fieldSideMenu.addEventListener("keydown", (event) => {
             }, 250);
         }
     }
+})
+
+getTaskContainer.addEventListener("change", (event) => {
+    const taskCheckBox = event.target.closest('.task-checkbox');
+    
+    if(taskCheckBox.checked){
+        console.log("checked");
+        const taskStatus = 1;
+        const parentContainer = event.target.parentElement;
+        const selectTask = parentContainer.querySelector('p');
+        const taskId = selectTask.id;
+        completedTask(taskId, taskStatus);
+        console.log("id:", taskId);
+    }
+    
+    if(!taskCheckBox.checked){
+        console.log("unchecked");
+        const taskStatus = 0;
+        const parentContainer = event.target.parentElement;
+        const selectTask = parentContainer.querySelector('p');
+        const taskId = selectTask.id;
+        completedTask(taskId, taskStatus);
+        console.log("id:", taskId);
+    }
+
 })
