@@ -4,7 +4,7 @@
 //     $selectstmt = SELECT * FROM task
 // }
 require_once("connect.php");
-$sql = "SELECT ID, Task FROM task";
+$sql = "SELECT ID, Task, Completed FROM task";
 
 $taskList = $conn->query($sql);
 if($taskList->num_rows > 0){
