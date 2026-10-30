@@ -6,8 +6,9 @@ const deleteBtn = document.getElementById("delete-task-button");
 const rightSideMenu = document.getElementById("side-menu");
 const fieldSideMenu = document.getElementById("task-side-menu");
 const taskCheckBox = document.getElementById("task-checkbox");
+const completedTaskContainer = document.getElementById("completedTask");
 
-getTask();
+getTask(); 
 
 addTask.addEventListener('keydown', function(event) {
     if(addTask.value.trim() === ""){
@@ -42,17 +43,26 @@ function getTask(){
             return response.json();
         })
         .then(data => {
-            if (data.length === 0){
-                getTaskContainer.innerHTML = '<p>no task</p>';
-                return;
-            }
-            let dataHolder;
+            let taskHolder;
+            let completedTaskHolder;
             data.forEach(task => {
-                dataHolder += `<div class="todo-container" id="todo-container"> 
-                    <input type="checkbox" id="task-checkbox" name="task-checkbox" class="task-checkbox"><p id="${task.ID}" class="task-item"> ${task.Task}</p>
-                </div>`;
+                const status = parseInt(task.Completed);
+                if(status == 0){
+                    taskHolder += `<div class="todo-container" id="todo-container"> 
+                        <input type="checkbox" id="task-checkbox" name="task-checkbox" class="task-checkbox"><p id="${task.ID}" class="task-item"> ${task.Task}</p>
+                    </div>`;
+                    
+                    getTaskContainer.innerHTML = taskHolder;
+                }else{
+                    completedTaskHolder += `<div class="todo-container" id="todo-container"> 
+                        <input type="checkbox" id="task-checkbox" name="task-checkbox" class="task-checkbox" checked><p id="${task.ID}" class="task-item"> ${task.Task}</p>
+                    </div>`;
+
+                    completedTaskContainer.innerHTML = completedTaskHolder;
+                }
+                
             });
-            getTaskContainer.innerHTML = dataHolder;
+            
         })
 }
 
@@ -123,10 +133,11 @@ getTaskContainer.addEventListener("click", (event) => {
 deleteBtn.addEventListener("click", () => {
     const taskId = deleteBtn.dataset.taskId;
     deleteModal.style.display = 'none';
+    deleteTask(taskId);
     setTimeout(() => {
     getTask();
     }, 250);
-    deleteTask(taskId);
+  
 });
 // update todo
 fieldSideMenu.addEventListener("keydown", (event) => {
@@ -164,6 +175,9 @@ getTaskContainer.addEventListener("change", (event) => {
         const taskId = selectTask.id;
         completedTask(taskId, taskStatus);
         console.log("id:", taskId);
+        setTimeout(() => {
+            getTask();
+        }, 250);
     }
     
     if(!taskCheckBox.checked){
@@ -176,4 +190,22 @@ getTaskContainer.addEventListener("change", (event) => {
         console.log("id:", taskId);
     }
 
+})
+
+completedTaskContainer.addEventListener("change", (event) => {
+    const taskCheckBox = event.target.closest('.task-checkbox');
+    
+    if(!taskCheckBox.checked){
+        console.log("unchecked");
+        const taskStatus = 0;
+        const parentContainer = event.target.parentElement;
+        const selectTask = parentContainer.querySelector('p');
+        const taskId = selectTask.id;
+        completedTask(taskId, taskStatus);
+        console.log("id:", taskId);
+
+        setTimeout(() => {
+            getTask();
+        }, 250);
+    }
 })
