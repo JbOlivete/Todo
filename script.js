@@ -7,6 +7,7 @@ const rightSideMenu = document.getElementById("side-menu");
 const fieldSideMenu = document.getElementById("task-side-menu");
 const taskCheckBox = document.getElementById("task-checkbox");
 const completedTaskContainer = document.getElementById("completedTask");
+const addTaskStep = document.getElementById("step-side-menu");
 
 getTask(); 
 
@@ -126,6 +127,8 @@ getTaskContainer.addEventListener("click", (event) => {
         fieldSideMenu.dataset.paraContent = pValue;
         fieldSideMenu.dataset.paraId = paraId;
         taskSideMenu.value = pValue;
+        // put id on add step
+        addTaskStep.dataset.taskId = p.id;
     }
 
 })
@@ -208,4 +211,29 @@ completedTaskContainer.addEventListener("change", (event) => {
             getTask();
         }, 250);
     }
+})
+
+addTaskStep.addEventListener("keydown", (event) => {
+    if(event.key === 'Enter'){
+        if(addTaskStep.value.trim() === ""){
+            addTaskStep.setAttribute('required', '');
+        }else{
+            event.preventDefault();
+
+            const data = {
+                taskId : addTaskStep.dataset.taskId.trim(),
+                stepValue : addTaskStep.value
+            };
+            fetch('phpscript/addTaskStep.php', {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            addTaskStep.value = ""
+        }
+        
+    }
+    
 })
