@@ -47,3 +47,11 @@ input{
 .completed-task-container {
     margin-top: 5px;
 }
+
+.steps-container {
+    border: 1px solid black;
+}
+
+.taskStepContainer {
+    display: flex;
+}

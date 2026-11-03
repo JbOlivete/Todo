@@ -18,15 +18,18 @@
         </div>
         <div class="completed-task-container box-todo">
             <h3>Completed Task</h3>
-            <div class="completed-task"></div>
+            <div class="completed-task" id="completedTask"></div>
         </div>
     </div>
     <!-- side menu -->
      <div class="side-menu" id="side-menu">
         <form id="form-side-menu">
             <input type="text" id="task-side-menu" name="task-side-menu">
+            <div class="steps-container" id="steps-container">
+               
+            </div>
+            <input type="text" id="step-side-menu" class="step-side-menu" name="step-side-menu" placeholder="addstep">
         </form>
-        <!-- <input type="text" id="step-side-menu" name="step-side-menu"> -->
      </div>
     <!-- modal -->
     <!-- right click on task -->

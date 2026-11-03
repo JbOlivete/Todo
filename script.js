@@ -8,6 +8,7 @@ const fieldSideMenu = document.getElementById("task-side-menu");
 const taskCheckBox = document.getElementById("task-checkbox");
 const completedTaskContainer = document.getElementById("completedTask");
 const addTaskStep = document.getElementById("step-side-menu");
+const stepsContainer = document.getElementById("steps-container");
 
 getTask(); 
 
@@ -44,8 +45,8 @@ function getTask(){
             return response.json();
         })
         .then(data => {
-            let taskHolder;
-            let completedTaskHolder;
+            let taskHolder = "";
+            let completedTaskHolder = "";
             data.forEach(task => {
                 const status = parseInt(task.Completed);
                 if(status == 0){
@@ -65,6 +66,27 @@ function getTask(){
             });
             
         })
+}
+
+function getTaskStep(taskid){
+    fetch('phpscript/getSteps.php', {
+        method: 'POST',
+        headers: {
+            'Content-type': 'application/json'
+        },
+        body: JSON.stringify({task_id: taskid})
+    })
+    .then(response => {
+        return response.json();
+    })
+    .then(data => {
+        let tStep = "";
+        data.forEach(taskStep => {
+            tStep += `<div class="taskStepContainer" id="taskStepContainer"><input type="checkbox" class="step-checkbox" id="step-checkbox"><p id="${taskStep.ID}">${taskStep.Steps}</p></div>`
+
+            stepsContainer.innerHTML = tStep;
+        });
+    })
 }
 
 function deleteTask(todo){
@@ -129,6 +151,7 @@ getTaskContainer.addEventListener("click", (event) => {
         taskSideMenu.value = pValue;
         // put id on add step
         addTaskStep.dataset.taskId = p.id;
+        getTaskStep(paraId);
     }
 
 })
