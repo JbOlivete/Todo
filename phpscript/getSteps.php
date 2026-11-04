@@ -20,5 +20,7 @@ if($taskStep->num_rows > 0){
         $data[] = $row;
     }
 }
-echo json_encode($data);
+if(isset($data)){
+    echo json_encode($data);
+}
 ?>

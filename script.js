@@ -82,7 +82,9 @@ function getTaskStep(taskid){
     .then(data => {
         let tStep = "";
         data.forEach(taskStep => {
-            tStep += `<div class="taskStepContainer" id="taskStepContainer"><input type="checkbox" class="step-checkbox" id="step-checkbox"><p id="${taskStep.ID}">${taskStep.Steps}</p></div>`
+            tStep += `<div class="taskStepContainer" id="taskStepContainer"><input type="checkbox" class="step-checkbox" id="step-checkbox">
+            <input type="text" id="${taskStep.ID}" class="stepsInputField" value="${taskStep.Steps}">
+            </div>`
 
             stepsContainer.innerHTML = tStep;
         });
@@ -203,7 +205,7 @@ getTaskContainer.addEventListener("change", (event) => {
         console.log("id:", taskId);
         setTimeout(() => {
             getTask();
-        }, 250);
+        }, 500);
     }
     
     if(!taskCheckBox.checked){
@@ -254,7 +256,12 @@ addTaskStep.addEventListener("keydown", (event) => {
                 },
                 body: JSON.stringify(data)
             });
-            addTaskStep.value = ""
+            addTaskStep.value = "";
+
+            setTimeout(() => {
+            getTaskStep(data.taskId);
+            }, 250);
+
         }
         
     }
