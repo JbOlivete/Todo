@@ -9,6 +9,7 @@ const taskCheckBox = document.getElementById("task-checkbox");
 const completedTaskContainer = document.getElementById("completedTask");
 const addTaskStep = document.getElementById("step-side-menu");
 const stepsContainer = document.getElementById("steps-container");
+const dueDate = document.getElementById("dueDate");
 
 getTask(); 
 
@@ -132,6 +133,7 @@ getTaskContainer.addEventListener("contextmenu", (event) => {
         const taskId = p.id;
         console.log(taskId);
         deleteBtn.dataset.taskId = taskId; 
+        dueDate.dataset.taskId = taskId;
         //modal loc
         const x = event.clientX;
         const y = event.clientY;
@@ -267,3 +269,25 @@ addTaskStep.addEventListener("keydown", (event) => {
     }
     
 })
+// due date
+flatpickr(dueDate, {
+    dateFormat: "Y-m-d",
+    defaultDate: "today",
+    closeOnSelect: false,
+
+    onReady: function(selectedDates, dateStr, instance){
+        const saveDueDate = document.createElement("button");
+        saveDueDate.textContent = "Save";
+        saveDueDate.type = "button";
+        saveDueDate.classList.add("save-due-date");
+        // saveDueDate.id.add("dueDate");
+
+        instance.calendarContainer.appendChild(saveDueDate);
+        saveDueDate.addEventListener("click", event => {
+            const selectedDate = instance.input.value;
+            console.log(selectedDate);
+            instance.close();
+
+        })
+    }
+});
