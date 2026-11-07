@@ -12,7 +12,7 @@ const stepsContainer = document.getElementById("steps-container");
 const dueDate = document.getElementById("dueDate");
 
 getTask(); 
-
+//add
 addTask.addEventListener('keydown', function(event) {
     if(addTask.value.trim() === ""){
        //to required
@@ -35,7 +35,7 @@ addTask.addEventListener('keydown', function(event) {
         }
     }
 });
-
+// get task
 function getTask(){
     // get data without refreshing the page
     fetch('phpscript/getTask.php')
@@ -68,7 +68,7 @@ function getTask(){
             
         })
 }
-
+// step
 function getTaskStep(taskid){
     fetch('phpscript/getSteps.php', {
         method: 'POST',
@@ -122,6 +122,20 @@ function showModal(x,y){
     deleteModal.style.left = `${x}px`;
     deleteModal.style.top = `${y}px`;
     deleteModal.style.display = 'block';
+}
+
+function addDueDate(task, duedate){
+    const data = {
+        taskId: task,
+        dueDate: duedate
+    }
+    fetch('phpscript/addDueDate.php',{
+        method: 'POST',
+        header: {
+            'Content-type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
 }
 
 getTaskContainer.addEventListener("contextmenu", (event) => {
@@ -280,14 +294,14 @@ flatpickr(dueDate, {
         saveDueDate.textContent = "Save";
         saveDueDate.type = "button";
         saveDueDate.classList.add("save-due-date");
-        // saveDueDate.id.add("dueDate");
 
         instance.calendarContainer.appendChild(saveDueDate);
         saveDueDate.addEventListener("click", event => {
             const selectedDate = instance.input.value;
-            console.log(selectedDate);
+            const taskId = dueDate.dataset.taskId;
             instance.close();
-
+            addDueDate(taskId, selectedDate);
         })
     }
 });
+// for tom send due date to database
