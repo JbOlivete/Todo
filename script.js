@@ -10,8 +10,11 @@ const completedTaskContainer = document.getElementById("completedTask");
 const addTaskStep = document.getElementById("step-side-menu");
 const stepsContainer = document.getElementById("steps-container");
 const dueDate = document.getElementById("dueDate");
+const newListBtn = document.getElementById("newList");
+const taskListContainer = document.getElementById("taskList");
 
-getTask(); 
+getTask();
+getList();
 //add
 addTask.addEventListener('keydown', function(event) {
     if(addTask.value.trim() === ""){
@@ -90,6 +93,25 @@ function getTaskStep(taskid){
             stepsContainer.innerHTML = tStep;
         });
     })
+}
+
+function getList(){
+   fetch('phpscript/getList.php')
+        .then(response => {
+            if(!response.ok){
+                throw new Error('network not response')
+            }
+            return response.json();
+        })
+        .then(data => {
+            let taskList = "";
+            data.forEach(taskL => {
+                taskList = `<div><p id="${taskL.ID}">${taskL.List}</p></div>`
+
+                taskListContainer.innerHTML += taskList;
+            })
+            
+        })
 }
 
 function deleteTask(todo){
@@ -304,4 +326,35 @@ flatpickr(dueDate, {
         })
     }
 });
-// for tom send due date to database
+
+newListBtn.addEventListener("click", () => {
+    const listField = document.createElement("input");
+    listField.type = "text";
+    listField.value = "Untitle List";
+    listField.classList.add("list-field");
+
+    taskListContainer.appendChild(listField);
+
+    listField.focus();
+    listField.select();
+
+    listField.addEventListener("blur", () => {
+        let listname = listField.value.trim();
+
+        if(listname == ""){
+            listname = "untitle list";
+        }
+        const data = {
+            list: listname
+        };
+
+        fetch('phpscript/addList.php',{
+            method: 'POST',
+            header: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        
+    })
+})

@@ -10,6 +10,11 @@
     <script src="script.js" defer></script>
 </head>
 <body>
+    <div class="right-side-menu" id="rightSideMenu">
+        <button id="newList" class="newList">New List</button>
+        <div class="task-list right-side-menu" id="taskList"></div>
+    </div>
+
     <div class="body-center">
         <form id="insert-task-form">
             <input type="text" name="task" id="input-task" placeholder="task" required></input>

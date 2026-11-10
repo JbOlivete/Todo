@@ -55,3 +55,8 @@ input{
 .taskStepContainer {
     display: flex;
 }
+
+.right-side-menu {
+    border: 1px solid black;
+    padding: 10px;
+}
