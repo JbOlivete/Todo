@@ -44,7 +44,15 @@
         <div>
             <button id="delete-task-button">delete</button>
             <button id="dueDate" class="due-date">due date</button>
+            <button id="moveTask" class="move-task">Move task</button>
         </div>
      </div>
+
+     <!-- list of task modal -->
+      <div class="modal hide" id="taskListOuter">
+        <div class="task-list-modal" id="task-list-modal">
+
+        </div>
+      </div>
 </body>
 </html>

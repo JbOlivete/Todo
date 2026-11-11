@@ -12,6 +12,8 @@ const stepsContainer = document.getElementById("steps-container");
 const dueDate = document.getElementById("dueDate");
 const newListBtn = document.getElementById("newList");
 const taskListContainer = document.getElementById("taskList");
+const taskListModal = document.getElementById("taskListOuter")
+const moveTaskBtn = document.getElementById("moveTask");
 
 getTask();
 getList();
@@ -106,9 +108,10 @@ function getList(){
         .then(data => {
             let taskList = "";
             data.forEach(taskL => {
-                taskList = `<div><p id="${taskL.ID}">${taskL.List}</p></div>`
+                taskList = `<div class="task-list-container"><p id="${taskL.ID}">${taskL.List}</p></div>`
 
                 taskListContainer.innerHTML += taskList;
+                taskListModal.innerHTML += taskList;
             })
             
         })
@@ -173,6 +176,9 @@ getTaskContainer.addEventListener("contextmenu", (event) => {
         //modal loc
         const x = event.clientX;
         const y = event.clientY;
+        // to position modal task list
+        moveTaskBtn.dataset.xPosition = x;
+        moveTaskBtn.dataset.yPosition = y;
         showModal(x,y)
     }
 });
@@ -357,4 +363,28 @@ newListBtn.addEventListener("click", () => {
         })
         
     })
+})
+
+moveTaskBtn.addEventListener("mouseenter", () => {
+    let x = 55;
+    let y = 20;
+    x += parseInt(moveTaskBtn.dataset.xPosition);
+    y += parseInt(moveTaskBtn.dataset.yPosition);
+    taskListModal.style.left = `${x}px`;
+    taskListModal.style.top = `${y}px`;
+    taskListModal.style.position = "absolute";
+    taskListModal.style.display = "block";
+    
+})
+
+moveTaskBtn.addEventListener("mouseleave", () => {
+    taskListModal.style.display = "none";
+})
+
+taskListModal.addEventListener("mouseenter", () => {
+    taskListModal.style.display = "block";
+})
+
+taskListModal.addEventListener("mouseleave", () => {
+    taskListModal.style.display = "none";
 })
