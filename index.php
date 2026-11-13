@@ -50,7 +50,7 @@
 
      <!-- list of task modal -->
       <div class="modal hide" id="taskListOuter">
-        <div class="task-list-modal" id="task-list-modal">
+        <div class="task-list-modal" id="taskListModalInner">
 
         </div>
       </div>

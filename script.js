@@ -14,6 +14,8 @@ const newListBtn = document.getElementById("newList");
 const taskListContainer = document.getElementById("taskList");
 const taskListModal = document.getElementById("taskListOuter")
 const moveTaskBtn = document.getElementById("moveTask");
+const taskListContent = document.getElementById("taskListContent");
+const listModal = document.getElementById("taskListModalInner");
 
 getTask();
 getList();
@@ -57,13 +59,13 @@ function getTask(){
                 const status = parseInt(task.Completed);
                 if(status == 0){
                     taskHolder += `<div class="todo-container" id="todo-container"> 
-                        <input type="checkbox" id="task-checkbox" name="task-checkbox" class="task-checkbox"><p id="${task.ID}" class="task-item"> ${task.Task}</p>
+                        <input type="checkbox" id="task-checkbox" name="task-checkbox" class="task-checkbox" data-list-group="${task.group_list}"><p id="${task.ID}" class="task-item"> ${task.Task}</p>
                     </div>`;
                     
                     getTaskContainer.innerHTML = taskHolder;
                 }else{
                     completedTaskHolder += `<div class="todo-container" id="todo-container"> 
-                        <input type="checkbox" id="task-checkbox" name="task-checkbox" class="task-checkbox" checked><p id="${task.ID}" class="task-item"> ${task.Task}</p>
+                        <input type="checkbox" id="task-checkbox" name="task-checkbox" class="task-checkbox" checked><p id="${task.ID}" class="task-item" data-list-group="${task.group_list}"> ${task.Task}</p>
                     </div>`;
 
                     completedTaskContainer.innerHTML = completedTaskHolder;
@@ -88,7 +90,7 @@ function getTaskStep(taskid){
     .then(data => {
         let tStep = "";
         data.forEach(taskStep => {
-            tStep += `<div class="taskStepContainer" id="taskStepContainer"><input type="checkbox" class="step-checkbox" id="step-checkbox">
+            tStep += `<div class="taskStepContainer" id="taskStepContainer"><input type="checkbox" class="step-checkbox" id="step-checkbox" >
             <input type="text" id="${taskStep.ID}" class="stepsInputField" value="${taskStep.Steps}">
             </div>`
 
@@ -108,10 +110,12 @@ function getList(){
         .then(data => {
             let taskList = "";
             data.forEach(taskL => {
-                taskList = `<div class="task-list-container"><p id="${taskL.ID}">${taskL.List}</p></div>`
+                taskList = `<div class="task-list-content" id="taskListContent">
+                    <p id="${taskL.ID}">${taskL.List}</p>
+                </div>`
 
                 taskListContainer.innerHTML += taskList;
-                taskListModal.innerHTML += taskList;
+                listModal.innerHTML += taskList;
             })
             
         })
@@ -173,6 +177,7 @@ getTaskContainer.addEventListener("contextmenu", (event) => {
         console.log(taskId);
         deleteBtn.dataset.taskId = taskId; 
         dueDate.dataset.taskId = taskId;
+        moveTaskBtn.dataset.taskId = taskId;
         //modal loc
         const x = event.clientX;
         const y = event.clientY;
@@ -388,3 +393,38 @@ taskListModal.addEventListener("mouseenter", () => {
 taskListModal.addEventListener("mouseleave", () => {
     taskListModal.style.display = "none";
 })
+
+listModal.addEventListener("click", (event) => {
+    const listOption = event.target.closest(".task-list-content");
+    
+    if(listOption){
+        const taskId = moveTaskBtn.dataset.taskId;
+        const p = listOption.querySelector("p");
+        const listId = p.id;
+
+        const data = {
+            taskId : taskId,
+            listId: listId
+        }
+
+        fetch('phpscript/insertTaskOnList.php',{
+            method: 'POST',
+            header: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+    }
+})
+
+taskListContainer.addEventListener("click", (event) => {
+    const listOption = event.target.closest(".task-list-content");
+    const p = listOption.querySelector("p");
+    const listId = p.id;
+
+    if(listOption){
+
+    }
+})
+
+    
