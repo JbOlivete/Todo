@@ -420,10 +420,39 @@ listModal.addEventListener("click", (event) => {
 taskListContainer.addEventListener("click", (event) => {
     const listOption = event.target.closest(".task-list-content");
     const p = listOption.querySelector("p");
-    const listId = p.id;
+    const listId = parseInt(p.id);
 
     if(listOption){
-
+        fetch('phpscript/getTask.php')
+        .then(response => {
+            if(!response.ok){
+                throw new Error('network not response')
+            }
+            return response.json();
+        })
+        .then(data => {
+            let unfinishTask = "";
+            let completedTask = "";
+            data.forEach(task => {
+                const listTaskId = parseInt(task.group_list);
+                if(listId === listTaskId){
+                    const status = parseInt(task.Completed);
+                    if(status === 0){
+                        unfinishTask += `<div class="todo-container" id="todo-container"> 
+                            <input type="checkbox" id="task-checkbox" name="task-checkbox" class="task-checkbox" data-list-group="${task.group_list}"><p id="${task.ID}" class="task-item"> ${task.Task}</p>
+                        </div>`;
+                        getTaskContainer.innerHTML = unfinishTask;
+                    }else{
+                        completedTask += `<div class="todo-container" id="todo-container"> 
+                            <input type="checkbox" id="task-checkbox" name="task-checkbox" class="task-checkbox" checked><p id="${task.ID}" class="task-item" data-list-group="${task.group_list}"> ${task.Task}</p>
+                        </div>`;
+                        completedTaskContainer.innerHTML = completedTask;
+                    }
+                }
+                
+            });
+            
+        })
     }
 })
 
