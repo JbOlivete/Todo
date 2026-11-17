@@ -8,7 +8,7 @@ $taskId = json_decode($rawData, true);
 if(isset($taskId['task_id'])){
     $id = intval($taskId['task_id']);
 }
-$sql = "SELECT ID, Steps FROM task_step WHERE TaskID = ?";
+$sql = "SELECT ID, Steps, Status FROM task_step WHERE TaskID = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $id);
 $stmt->execute();
