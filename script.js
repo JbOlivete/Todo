@@ -8,7 +8,7 @@ const fieldSideMenu = document.getElementById("task-side-menu");
 const taskCheckBox = document.getElementById("task-checkbox");
 const completedTaskContainer = document.getElementById("completedTask");
 const addTaskStep = document.getElementById("step-side-menu");
-const stepsContainer = document.getElementById("steps-container");
+const stepsContainer = document.getElementById("stepsContainer");
 const dueDate = document.getElementById("dueDate");
 const newListBtn = document.getElementById("newList");
 const taskListContainer = document.getElementById("taskList");
@@ -16,6 +16,8 @@ const taskListModal = document.getElementById("taskListOuter")
 const moveTaskBtn = document.getElementById("moveTask");
 const taskListContent = document.getElementById("taskListContent");
 const listModal = document.getElementById("taskListModalInner");
+const modalOnList = document.getElementById("modalOnList");
+const deleteOnList = document.getElementById("deleteList");
 
 getTask();
 getList();
@@ -90,11 +92,20 @@ function getTaskStep(taskid){
     .then(data => {
         let tStep = "";
         data.forEach(taskStep => {
-            tStep += `<div class="taskStepContainer" id="taskStepContainer"><input type="checkbox" class="step-checkbox" id="step-checkbox" >
-            <input type="text" id="${taskStep.ID}" class="stepsInputField" value="${taskStep.Steps}">
-            </div>`
+            if(taskStep.Status === 1){
+                tStep += `<div class="taskStepContainer" id="taskStepContainer"><input type="checkbox" class="step-checkbox" id="step-checkbox" checked>
+                    <input type="text" id="${taskStep.ID}" class="stepsInputField" value="${taskStep.Steps}">
+                </div>`
 
-            stepsContainer.innerHTML = tStep;
+                stepsContainer.innerHTML = tStep;
+            }else{
+                tStep = "";
+                 tStep += `<div class="taskStepContainer" id="taskStepContainer"><input type="checkbox" class="step-checkbox" id="step-checkbox">
+                    <input type="text" id="${taskStep.ID}" class="stepsInputField" value="${taskStep.Steps}">
+                </div>`
+
+                stepsContainer.innerHTML += tStep;
+            }
         });
     })
 }
@@ -140,6 +151,19 @@ function completedTask(todo, completed){
         },
         body: JSON.stringify({
             task_id: todo,
+            status: completed
+        })
+    })
+}
+
+function completedSteps(todo, completed){
+    fetch('phpscript/completedStep.php', {
+        method: 'POST',
+        headers: {
+            'Content-type': 'application/json'
+        },
+        body: JSON.stringify({
+            list_id: todo,
             status: completed
         })
     })
@@ -456,4 +480,50 @@ taskListContainer.addEventListener("click", (event) => {
     }
 })
 
+taskListContainer.addEventListener("contextmenu", (event) =>{
+     const listOption = event.target.closest(".task-list-content");
+     
+     if(listOption){
+        event.preventDefault();
+        const x = event.clientX;
+        const y = event.clientY;
+        
+        modalOnList.style.left = `${x}px`;
+        modalOnList.style.top = `${y}px`;
+        modalOnList.style.position = "absolute";
+        modalOnList.style.display = "block";
+
+        const p = listOption.querySelector("p");
+        const listId = parseInt(p.id);
+        deleteOnList.dataset.LId = listId;
+     }
+})
+
+deleteOnList.addEventListener("click", () => {
+    const listId = deleteOnList.dataset.LId;
     
+    const data = {
+        Id:listId
+    }
+
+    fetch("phpscript/deleteList.php",{
+        method: "POST",
+        header: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    })
+})
+
+stepsContainer.addEventListener("change", (event) => {
+    const stepCheckBox = event.target.closest(".step-checkbox");
+    
+    if(stepCheckBox.checked){
+        const status = 1;
+        const parentContainer = event.target.parentElement;
+        const accessId = parentContainer.querySelector(".stepsInputField");
+        const stepId = accessId.id;
+        completedSteps(stepId, status);
+    }
+
+
+
+})
