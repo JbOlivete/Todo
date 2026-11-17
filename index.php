@@ -11,28 +11,38 @@
 </head>
 <body>
     <div class="right-side-menu" id="rightSideMenu">
-        <button id="newList" class="newList">New List</button>
+        <div class="permanent-list" id="permanentList">
+            <div class="my-day" id="myDay">
+                <p>My day</p>
+            </div>
+            <div class="my-day" id="myDay">
+                <p>Task</p>
+            </div>
+        </div>
         <div class="task-list right-side-menu" id="taskList"></div>
+        <button id="newList" class="newList">New List</button>
     </div>
 
     <div class="body-center">
-        <form id="insert-task-form">
+       <h2>Todo</h2>
+        <div id="task-container" class="box-todo">
+            
+        </div>
+         <form id="insert-task-form">
             <input type="text" name="task" id="input-task" placeholder="task" required></input>
             <!-- <button class="insert-onsubmit" id="insertbtn">submit</button> -->
         </form>
-        <div id="task-container" class="box-todo">
-            <h2>Todo</h2>
-        </div>
         <div class="completed-task-container box-todo">
             <h3>Completed Task</h3>
             <div class="completed-task" id="completedTask"></div>
         </div>
+        
     </div>
     <!-- side menu -->
      <div class="side-menu" id="side-menu">
         <form id="form-side-menu">
             <input type="text" id="task-side-menu" name="task-side-menu">
-            <div class="steps-container" id="steps-container">
+            <div class="steps-container" id="stepsContainer">
                
             </div>
             <input type="text" id="step-side-menu" class="step-side-menu" name="step-side-menu" placeholder="addstep">
@@ -54,5 +64,13 @@
 
         </div>
       </div>
+
+      <!-- modal rightclick on list  -->
+       <div class="modal hide" id="modalOnList">
+        <div>
+            <button id="deleteList">Delete</button>
+            <button id="renameList">Rename</button>
+        </div>
+       </div>
 </body>
 </html>
