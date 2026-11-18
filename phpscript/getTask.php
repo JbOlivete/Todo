@@ -4,7 +4,8 @@
 //     $selectstmt = SELECT * FROM task
 // }
 require_once("connect.php");
-$sql = "SELECT ID, Task, Completed, group_list FROM task";
+$sql = "SELECT ID, Task, Completed, group_list, date_created FROM task";
+$data = [];
 
 $taskList = $conn->query($sql);
 if($taskList->num_rows > 0){
@@ -12,6 +13,7 @@ if($taskList->num_rows > 0){
         $data[] = $row;
     }
 }
+
 echo json_encode($data);
 
 $conn->close();

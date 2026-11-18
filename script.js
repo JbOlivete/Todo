@@ -1,5 +1,4 @@
 const addTask = document.getElementById("input-task");
-const insertTaskForm = document.getElementById("insert-task-form");
 const getTaskContainer = document.getElementById("task-container");
 const deleteModal = document.querySelector(".delete-modal");
 const deleteBtn = document.getElementById("delete-task-button");
@@ -28,13 +27,22 @@ addTask.addEventListener('keydown', function(event) {
     }else{
         if(event.key === 'Enter'){
             event.preventDefault();
-            
-            const inputValue = new FormData(insertTaskForm);
+            const currentDate = new Date().toISOString().slice(0, 10);
+            const inputValue = addTask.value;
+
+            const data = {
+                date: currentDate,
+                task: inputValue
+            }
             
             fetch('phpscript/insertTask.php', {
                 method: 'POST',
-                body: inputValue
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(data)
             });
+
             addTask.value = '';
             
             setTimeout(() => {
@@ -57,24 +65,35 @@ function getTask(){
         .then(data => {
             let taskHolder = "";
             let completedTaskHolder = "";
-            data.forEach(task => {
-                const status = parseInt(task.Completed);
-                if(status == 0){
-                    taskHolder += `<div class="todo-container" id="todo-container"> 
-                        <input type="checkbox" id="task-checkbox" name="task-checkbox" class="task-checkbox" data-list-group="${task.group_list}"><p id="${task.ID}" class="task-item"> ${task.Task}</p>
-                    </div>`;
-                    
-                    getTaskContainer.innerHTML = taskHolder;
-                }else{
-                    completedTaskHolder += `<div class="todo-container" id="todo-container"> 
-                        <input type="checkbox" id="task-checkbox" name="task-checkbox" class="task-checkbox" checked><p id="${task.ID}" class="task-item" data-list-group="${task.group_list}"> ${task.Task}</p>
-                    </div>`;
-
-                    completedTaskContainer.innerHTML = completedTaskHolder;
-                }
-                
-            });
+            let noTask = "";
+            const currentDate = new Date().toISOString().slice(0, 10);
             
+            if(data.length === 0){
+                noTask += `<div><h1>No Task</h1></div>`;
+                getTaskContainer.innerHTML = noTask;
+            }else{
+                    data.forEach(task => {
+                    const dateCreated = task.date_created;
+                    if(dateCreated === currentDate){
+                        const status = parseInt(task.Completed);
+                        if(status == 0){
+                            taskHolder += `<div class="todo-container" id="todo-container"> 
+                                <input type="checkbox" id="task-checkbox" name="task-checkbox" class="task-checkbox" data-list-group="${task.group_list}"><p id="${task.ID}" class="task-item"> ${task.Task}</p>
+                            </div>`;
+                            
+                            getTaskContainer.innerHTML += taskHolder;
+                            taskHolder = "";
+                        }else{
+                            completedTaskHolder += `<div class="todo-container" id="todo-container"> 
+                                <input type="checkbox" id="task-checkbox" name="task-checkbox" class="task-checkbox" checked><p id="${task.ID}" class="task-item" data-list-group="${task.group_list}"> ${task.Task}</p>
+                            </div>`;
+
+                            completedTaskContainer.innerHTML = completedTaskHolder;
+                        }
+                    }       
+                    
+                });
+            }
         })
 }
 // step
@@ -99,7 +118,7 @@ function getTaskStep(taskid){
 
                 stepsContainer.innerHTML = tStep;
             }else{
-                tStep = "";
+                 tStep = "";
                  tStep += `<div class="taskStepContainer" id="taskStepContainer"><input type="checkbox" class="step-checkbox" id="step-checkbox">
                     <input type="text" id="${taskStep.ID}" class="stepsInputField" value="${taskStep.Steps}">
                 </div>`
@@ -224,7 +243,6 @@ getTaskContainer.addEventListener("click", (event) => {
         fieldSideMenu.dataset.paraContent = pValue;
         fieldSideMenu.dataset.paraId = paraId;
         taskSideMenu.value = pValue;
-        // put id on add step
         addTaskStep.dataset.taskId = p.id;
         getTaskStep(paraId);
     }
@@ -523,7 +541,13 @@ stepsContainer.addEventListener("change", (event) => {
         const stepId = accessId.id;
         completedSteps(stepId, status);
     }
-
+    if(!stepCheckBox.checked){
+        const status = 0;
+        const parentContainer = event.target.parentElement;
+        const accessId = parentContainer.querySelector(".stepsInputField");
+        const stepId = accessId.id;
+        completedSteps(stepId, status);
+    }
 
 
 })

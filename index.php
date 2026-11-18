@@ -10,6 +10,7 @@
     <script src="script.js" defer></script>
 </head>
 <body>
+    <!-- left side menu -->
     <div class="right-side-menu" id="rightSideMenu">
         <div class="permanent-list" id="permanentList">
             <div class="my-day" id="myDay">
@@ -24,21 +25,23 @@
     </div>
 
     <div class="body-center">
-       <h2>Todo</h2>
+       <h2>My Day</h2>
+       
         <div id="task-container" class="box-todo">
-            
+
         </div>
-         <form id="insert-task-form">
-            <input type="text" name="task" id="input-task" placeholder="task" required></input>
-            <!-- <button class="insert-onsubmit" id="insertbtn">submit</button> -->
-        </form>
+        
+        
+        <input type="text" name="task" id="input-task" placeholder="task" required></input>
+        <!-- <button class="insert-onsubmit" id="insertbtn">submit</button> -->
+        
         <div class="completed-task-container box-todo">
             <h3>Completed Task</h3>
             <div class="completed-task" id="completedTask"></div>
         </div>
         
     </div>
-    <!-- side menu -->
+    <!-- right side menu -->
      <div class="side-menu" id="side-menu">
         <form id="form-side-menu">
             <input type="text" id="task-side-menu" name="task-side-menu">
