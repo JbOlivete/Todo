@@ -11,7 +11,7 @@
 </head>
 <body>
     <!-- left side menu -->
-    <div class="right-side-menu" id="rightSideMenu">
+    <div class="left-side-menu" id="rightSideMenu">
         <div class="permanent-list" id="permanentList">
             <div class="my-day" id="myDay">
                 <p>My day</p>
@@ -19,9 +19,10 @@
             <div class="my-day" id="myDay">
                 <p>Task</p>
             </div>
+            <div class="task-list right-side-menu" id="taskList"></div>
         </div>
-        <div class="task-list right-side-menu" id="taskList"></div>
-        <button id="newList" class="newList">New List</button>
+        
+        <div><button id="newList" class="newList">New List</button></div>
     </div>
 
     <div class="body-center">
