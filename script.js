@@ -210,6 +210,49 @@ function addDueDate(task, duedate){
     })
 }
 
+function twoEvent(input, event){
+    const inputValue = input.value.trim()
+    const eventType = event.type;
+    const isEnter = false;
+    
+    console.log(event.type);
+    
+    if(event.type === "keydown"){
+        if(event.key === "Enter"){
+            isEnter = true;
+            getListValue(inputValue);
+        }
+    }
+
+    if(event.type === "blur"){
+        if(isEnter === true){
+            isEnter = false;
+            return;
+        }else{
+            getListValue(inputValue);
+        }
+    }
+
+}
+
+function getListValue(listValue){
+
+    if(listValue == ""){
+        listValue = "untitled list";
+    }
+    const data = {
+        list: listValue
+    };
+
+    fetch('phpscript/addList.php',{
+        method: 'POST',
+        header: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+}
+
 getTaskContainer.addEventListener("contextmenu", (event) => {
     const todo = event.target.closest('.todo-container');
     if(todo){
@@ -385,31 +428,16 @@ newListBtn.addEventListener("click", () => {
     listField.type = "text";
     listField.value = "Untitle List";
     listField.classList.add("list-field");
+    listField.id = "newListField"
 
     taskListContainer.appendChild(listField);
 
     listField.focus();
     listField.select();
-
-    listField.addEventListener("blur", () => {
-        let listname = listField.value.trim();
-
-        if(listname == ""){
-            listname = "untitle list";
-        }
-        const data = {
-            list: listname
-        };
-
-        fetch('phpscript/addList.php',{
-            method: 'POST',
-            header: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-        
-    })
+    
+    listField.addEventListener("blur", (event) => twoEvent(listField, event));
+    listField.addEventListener("keydown", (event) => twoEvent(listField, event));
+  
 })
 
 moveTaskBtn.addEventListener("mouseenter", () => {
