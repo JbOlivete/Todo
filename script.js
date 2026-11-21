@@ -17,6 +17,9 @@ const taskListContent = document.getElementById("taskListContent");
 const listModal = document.getElementById("taskListModalInner");
 const modalOnList = document.getElementById("modalOnList");
 const deleteOnList = document.getElementById("deleteList");
+const leftListField = document.getElementById("newListField");
+const completedBtn = document.getElementById("completedBtn");
+const completedTaskParent = document.getElementById("completedTaskParent");
 
 getTask();
 getList();
@@ -64,7 +67,7 @@ function getTask(){
         })
         .then(data => {
             let taskHolder = "";
-            let completedTaskHolder = "";
+            let completeTask = "";
             let noTask = "";
             const currentDate = new Date().toISOString().slice(0, 10);
             
@@ -76,19 +79,23 @@ function getTask(){
                     const dateCreated = task.date_created;
                     if(dateCreated === currentDate){
                         const status = parseInt(task.Completed);
-                        if(status == 0){
+                        if(status === 0){
                             taskHolder += `<div class="todo-container" id="todo-container"> 
                                 <input type="checkbox" id="task-checkbox" name="task-checkbox" class="task-checkbox" data-list-group="${task.group_list}"><p id="${task.ID}" class="task-item"> ${task.Task}</p>
                             </div>`;
                             
-                            getTaskContainer.innerHTML += taskHolder;
-                            taskHolder = "";
+                            getTaskContainer.innerHTML = taskHolder;
+                            
                         }else{
-                            completedTaskHolder += `<div class="todo-container" id="todo-container"> 
+                            completeTask += `<div class="todo-container" id="todo-container"> 
                                 <input type="checkbox" id="task-checkbox" name="task-checkbox" class="task-checkbox" checked><p id="${task.ID}" class="task-item" data-list-group="${task.group_list}"> ${task.Task}</p>
                             </div>`;
 
-                            completedTaskContainer.innerHTML = completedTaskHolder;
+                            completedTaskContainer.innerHTML = completeTask;
+                            
+                            
+                            completedBtn.classList.remove("hide");
+                            completedTaskParent.classList.remove("hide");
                         }
                     }       
                     
@@ -109,23 +116,31 @@ function getTaskStep(taskid){
         return response.json();
     })
     .then(data => {
-        let tStep = "";
-        data.forEach(taskStep => {
-            if(taskStep.Status === 1){
-                tStep += `<div class="taskStepContainer" id="taskStepContainer"><input type="checkbox" class="step-checkbox" id="step-checkbox" checked>
-                    <input type="text" id="${taskStep.ID}" class="stepsInputField" value="${taskStep.Steps}">
-                </div>`
+        let tStep = ""
+        if(data.length === 0){
+            tStep = ""
+            stepsContainer.innerHTML = tStep;
+            console.log("im zero");
+        }else{
+            data.forEach(taskStep => {
+                if(taskStep.Status === 1){
+                    tStep += `<div class="taskStepContainer" id="taskStepContainer"><input type="checkbox" class="step-checkbox" id="step-checkbox" checked>
+                        <input type="text" id="${taskStep.ID}" class="stepsInputField" value="${taskStep.Steps}">
+                    </div>`
 
-                stepsContainer.innerHTML = tStep;
-            }else{
-                 tStep = "";
-                 tStep += `<div class="taskStepContainer" id="taskStepContainer"><input type="checkbox" class="step-checkbox" id="step-checkbox">
-                    <input type="text" id="${taskStep.ID}" class="stepsInputField" value="${taskStep.Steps}">
-                </div>`
+                    stepsContainer.innerHTML = tStep;
+                }else{
+                    tStep = "";
+                    tStep += `<div class="taskStepContainer" id="taskStepContainer"><input type="checkbox" class="step-checkbox" id="step-checkbox">
+                        <input type="text" id="${taskStep.ID}" class="stepsInputField" value="${taskStep.Steps}">
+                    </div>`
 
-                stepsContainer.innerHTML += tStep;
-            }
-        });
+                    stepsContainer.innerHTML = tStep;
+                }
+            
+            });
+        }
+      
     })
 }
 
@@ -209,30 +224,12 @@ function addDueDate(task, duedate){
         body: JSON.stringify(data)
     })
 }
-
-function twoEvent(input, event){
+// to fix(2 listener dapat keydown at blur sa list input field)
+function twoEvent(event, input){
     const inputValue = input.value.trim()
     const eventType = event.type;
-    const isEnter = false;
-    
-    console.log(event.type);
-    
-    if(event.type === "keydown"){
-        if(event.key === "Enter"){
-            isEnter = true;
-            getListValue(inputValue);
-        }
-    }
-
-    if(event.type === "blur"){
-        if(isEnter === true){
-            isEnter = false;
-            return;
-        }else{
-            getListValue(inputValue);
-        }
-    }
-
+    const keyPress = event.key
+    getListValue(inputValue)
 }
 
 function getListValue(listValue){
@@ -325,7 +322,7 @@ fieldSideMenu.addEventListener("keydown", (event) => {
         }
     }
 })
-
+// checkbox listener
 getTaskContainer.addEventListener("change", (event) => {
     const taskCheckBox = event.target.closest('.task-checkbox');
     
@@ -335,8 +332,10 @@ getTaskContainer.addEventListener("change", (event) => {
         const parentContainer = event.target.parentElement;
         const selectTask = parentContainer.querySelector('p');
         const taskId = selectTask.id;
+
         completedTask(taskId, taskStatus);
         console.log("id:", taskId);
+        getTaskContainer.innerHTML = "";
         setTimeout(() => {
             getTask();
         }, 500);
@@ -350,6 +349,9 @@ getTaskContainer.addEventListener("change", (event) => {
         const taskId = selectTask.id;
         completedTask(taskId, taskStatus);
         console.log("id:", taskId);
+        setTimeout(() => {
+            getTask();
+        }, 500);
     }
 
 })
@@ -424,21 +426,14 @@ flatpickr(dueDate, {
 });
 
 newListBtn.addEventListener("click", () => {
-    const listField = document.createElement("input");
-    listField.type = "text";
-    listField.value = "Untitle List";
-    listField.classList.add("list-field");
-    listField.id = "newListField"
-
-    taskListContainer.appendChild(listField);
-
-    listField.focus();
-    listField.select();
-    
-    listField.addEventListener("blur", (event) => twoEvent(listField, event));
-    listField.addEventListener("keydown", (event) => twoEvent(listField, event));
-  
+    leftListField.classList.remove("hide");
+    leftListField.focus();
+    leftListField.select();
 })
+
+leftListField.addEventListener("blur", (event) => twoEvent(event, leftListField));
+// leftListField
+
 
 moveTaskBtn.addEventListener("mouseenter", () => {
     let x = 55;
@@ -578,4 +573,14 @@ stepsContainer.addEventListener("change", (event) => {
     }
 
 
+})
+
+completedBtn.addEventListener("click", () => {
+    const visible = completedTaskParent.checkVisibility()
+
+    if(visible){
+        completedTaskParent.classList.add("hide");
+    }else{
+        completedTaskParent.classList.remove("hide");
+    }
 })
