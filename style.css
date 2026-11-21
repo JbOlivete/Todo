@@ -8,6 +8,13 @@ html, body{
 
 .body-center{
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+}
+
+.task-section{
+    margin-bottom: auto;
 }
 
 input{
@@ -45,11 +52,9 @@ input{
 .hide{
     display: none;
 }
-
-.completed-task-container {
-    margin-top: 5px;
+.completed-task-container{
+    padding: 5px;
 }
-
 .steps-container {
     border: 1px solid black;
 }
@@ -78,4 +83,17 @@ input{
 
 .permanent-list {
     margin-bottom: auto;
+}
+
+.show-container{
+    border: 1px solid black;
+}
+
+.input-task-section {
+    height: 30px;
+}
+
+.input-task-field{
+    width: 100%;
+    height: 100%;
 }

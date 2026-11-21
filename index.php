@@ -19,27 +19,30 @@
             <div class="my-day" id="myDay">
                 <p>Task</p>
             </div>
-            <div class="task-list right-side-menu" id="taskList"></div>
+            <div class="task-list right-side-menu show-container" id="taskList"></div>
+            <div class="show-container"><input type="text" class="list-field hide" id="newListField" value="Untitle List"></div>
         </div>
         
-        <div><button id="newList" class="newList">New List</button></div>
+        <div><button id="newList" class="newList show-container">New List</button></div>
     </div>
 
     <div class="body-center">
-       <h2>My Day</h2>
-       
-        <div id="task-container" class="box-todo">
+        <div class="task-section">
+            <h2>My Day</h2>
+            <div id="task-container" class="box-todo"></div>
+            <div class="show-container">
+                <button class="completed-button hide" id="completedBtn">Completed</button>
+                <div class="completed-task-container hide" id="completedTaskParent">
+                    <div class="completed-task show-container" id="completedTask"></div>
+                </div>
 
+            </div>
         </div>
-        
-        
-        <input type="text" name="task" id="input-task" placeholder="task" required></input>
+
+        <div class="input-task-section show-container">
+            <input type="text" name="task" id="input-task" class="input-task-field" placeholder="What's your need wants today?" required></input>
+        </div>
         <!-- <button class="insert-onsubmit" id="insertbtn">submit</button> -->
-        
-        <div class="completed-task-container box-todo">
-            <h3>Completed Task</h3>
-            <div class="completed-task" id="completedTask"></div>
-        </div>
         
     </div>
     <!-- right side menu -->
