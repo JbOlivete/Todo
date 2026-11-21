@@ -14,6 +14,7 @@ $stmt->bind_param("i", $id);
 $stmt->execute();
 
 // $sql->execute()
+$data = [];
 $taskStep = $stmt->get_result();
 if($taskStep->num_rows > 0){
     while($row = $taskStep->fetch_assoc()){
