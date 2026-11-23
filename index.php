@@ -79,5 +79,12 @@
             <button id="renameList">Rename</button>
         </div>
        </div>
+
+       <!-- delete steps modal -->
+        <div class="modal hide" id="modalOnSteps">
+            <div>
+                <button id="deleteSteps" class="deleteSteps">Delete</button>
+            </div>
+        </div>
 </body>
 </html>
