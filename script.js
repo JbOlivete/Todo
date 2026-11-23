@@ -20,6 +20,10 @@ const deleteOnList = document.getElementById("deleteList");
 const leftListField = document.getElementById("newListField");
 const completedBtn = document.getElementById("completedBtn");
 const completedTaskParent = document.getElementById("completedTaskParent");
+const deleteSteps = document.getElementById("deleteSteps");
+
+// to know if completed task is hidden
+let isHide = "";
 
 getTask();
 getList();
@@ -75,6 +79,9 @@ function getTask(){
                 noTask += `<div><h1>No Task</h1></div>`;
                 getTaskContainer.innerHTML = noTask;
             }else{
+                    // clearing container on call
+                    getTaskContainer.innerHTML = "";
+                    completedTaskContainer.innerHTML = "";
                     data.forEach(task => {
                     const dateCreated = task.date_created;
                     if(dateCreated === currentDate){
@@ -87,22 +94,42 @@ function getTask(){
                             getTaskContainer.innerHTML = taskHolder;
                             
                         }else{
+                            
                             completeTask += `<div class="todo-container" id="todo-container"> 
                                 <input type="checkbox" id="task-checkbox" name="task-checkbox" class="task-checkbox" checked><p id="${task.ID}" class="task-item" data-list-group="${task.group_list}"> ${task.Task}</p>
                             </div>`;
 
                             completedTaskContainer.innerHTML = completeTask;
                             
-                            
                             completedBtn.classList.remove("hide");
                             completedTaskParent.classList.remove("hide");
+                            
                         }
-                    }       
-                    
+                    }   
                 });
+                const numberOfChild = completedTaskContainer.children.length;
+                const numberOfTask = getTaskContainer.children.length;
+
+                if(isHide){
+                    completedTaskParent.classList.add("hide");
+                    isHide = "";
+                }
+
+                if(numberOfChild === 0){
+                    completedBtn.classList.add("hide");
+                    completedTaskParent.classList.add("hide");
+                }
+
+                if(numberOfTask === 0){
+                    getTaskContainer.classList.add("hide");
+                }else{
+                    getTaskContainer.classList.remove("hide");
+                }
+
             }
         })
 }
+
 // step
 function getTaskStep(taskid){
     fetch('phpscript/getSteps.php', {
@@ -121,7 +148,9 @@ function getTaskStep(taskid){
             tStep = ""
             stepsContainer.innerHTML = tStep;
             console.log("im zero");
+            stepsContainer.style.display = "none";
         }else{
+            stepsContainer.style.display = "block";
             data.forEach(taskStep => {
                 if(taskStep.Status === 1){
                     tStep += `<div class="taskStepContainer" id="taskStepContainer"><input type="checkbox" class="step-checkbox" id="step-checkbox" checked>
@@ -130,7 +159,7 @@ function getTaskStep(taskid){
 
                     stepsContainer.innerHTML = tStep;
                 }else{
-                    tStep = "";
+                    // tStep = "";
                     tStep += `<div class="taskStepContainer" id="taskStepContainer"><input type="checkbox" class="step-checkbox" id="step-checkbox">
                         <input type="text" id="${taskStep.ID}" class="stepsInputField" value="${taskStep.Steps}">
                     </div>`
@@ -335,24 +364,23 @@ getTaskContainer.addEventListener("change", (event) => {
 
         completedTask(taskId, taskStatus);
         console.log("id:", taskId);
-        getTaskContainer.innerHTML = "";
         setTimeout(() => {
             getTask();
-        }, 500);
+        }, 200);
     }
     
-    if(!taskCheckBox.checked){
-        console.log("unchecked");
-        const taskStatus = 0;
-        const parentContainer = event.target.parentElement;
-        const selectTask = parentContainer.querySelector('p');
-        const taskId = selectTask.id;
-        completedTask(taskId, taskStatus);
-        console.log("id:", taskId);
-        setTimeout(() => {
-            getTask();
-        }, 500);
-    }
+    // if(!taskCheckBox.checked){
+    //     console.log("unchecked");
+    //     const taskStatus = 0;
+    //     const parentContainer = event.target.parentElement;
+    //     const selectTask = parentContainer.querySelector('p');
+    //     const taskId = selectTask.id;
+    //     completedTask(taskId, taskStatus);
+    //     console.log("id:", taskId);
+    //     setTimeout(() => {
+    //         getTask();
+    //     }, 500);
+    // }
 
 })
 
@@ -572,7 +600,41 @@ stepsContainer.addEventListener("change", (event) => {
         completedSteps(stepId, status);
     }
 
+})
 
+stepsContainer.addEventListener("contextmenu", (event) => {
+    const taskStepContainer = event.target.closest(".taskStepContainer");
+    const stepsDeleteModal = document.getElementById("modalOnSteps");
+    const x = event.clientX;
+    const y = event.clientY;
+
+    event.preventDefault();
+
+    stepsDeleteModal.style.position = 'absolute';
+    stepsDeleteModal.style.left = `${x}px`;
+    stepsDeleteModal.style.top = `${y}px`;
+    stepsDeleteModal.style.display = 'block';
+    
+    if(taskStepContainer){
+        const stepsId = taskStepContainer.querySelector(".stepsInputField");
+        const Id = parseInt(stepsId.id);
+        deleteSteps.dataset.stepId = Id;
+    }
+})
+
+deleteSteps.addEventListener("click", () => {
+    const ID = deleteSteps.dataset.stepId;
+    const data = {
+        stepsID : ID
+    };
+
+    fetch("phpscript/deleteStep.php",{
+        method: "POST",
+        headers: {
+            'Content-type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
 })
 
 completedBtn.addEventListener("click", () => {
@@ -580,7 +642,9 @@ completedBtn.addEventListener("click", () => {
 
     if(visible){
         completedTaskParent.classList.add("hide");
+        isHide = true;
     }else{
         completedTaskParent.classList.remove("hide");
+        isHide = false;
     }
 })
