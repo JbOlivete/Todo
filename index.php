@@ -13,13 +13,15 @@
     <!-- left side menu -->
     <div class="left-side-menu" id="rightSideMenu">
         <div class="permanent-list" id="permanentList">
-            <div class="my-day" id="myDay">
+            <div class="my-day-task" id="myDayTask">
                 <p>My day</p>
             </div>
-            <div class="my-day" id="myDay">
+            <div class="all-task" id="allTask">
                 <p>Task</p>
             </div>
-            <div class="task-list right-side-menu show-container" id="taskList"></div>
+            <div class="task-list right-side-menu show-container" id="taskList">
+                
+            </div>
             <div class="show-container"><input type="text" class="list-field hide" id="newListField" value="Untitle List"></div>
         </div>
         
@@ -30,7 +32,7 @@
         <div class="task-section">
             <h2>My Day</h2>
             <div id="task-container" class="box-todo"></div>
-            <div class="show-container">
+            <div class="show-container completedSection">
                 <button class="completed-button hide" id="completedBtn">Completed</button>
                 <div class="completed-task-container hide" id="completedTaskParent">
                     <div class="completed-task show-container" id="completedTask"></div>
