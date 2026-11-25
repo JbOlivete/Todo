@@ -21,6 +21,9 @@ const leftListField = document.getElementById("newListField");
 const completedBtn = document.getElementById("completedBtn");
 const completedTaskParent = document.getElementById("completedTaskParent");
 const deleteSteps = document.getElementById("deleteSteps");
+const allTask = document.getElementById("allTask");
+const myDayTask = document.getElementById("myDayTask");
+
 
 // to know if completed task is hidden
 let isHide = "";
@@ -60,7 +63,7 @@ addTask.addEventListener('keydown', function(event) {
     }
 });
 // get task
-function getTask(){
+function getTask(request){
     // get data without refreshing the page
     fetch('phpscript/getTask.php')
         .then(response => {
@@ -73,6 +76,7 @@ function getTask(){
             let taskHolder = "";
             let completeTask = "";
             let noTask = "";
+            const isNum  = typeof request;
             const currentDate = new Date().toISOString().slice(0, 10);
             
             if(data.length === 0){
@@ -84,7 +88,8 @@ function getTask(){
                     completedTaskContainer.innerHTML = "";
                     data.forEach(task => {
                     const dateCreated = task.date_created;
-                    if(dateCreated === currentDate){
+                    // get all task
+                    if(request === "all task"){
                         const status = parseInt(task.Completed);
                         if(status === 0){
                             taskHolder += `<div class="todo-container" id="todo-container"> 
@@ -92,9 +97,7 @@ function getTask(){
                             </div>`;
                             
                             getTaskContainer.innerHTML = taskHolder;
-                            
                         }else{
-                            
                             completeTask += `<div class="todo-container" id="todo-container"> 
                                 <input type="checkbox" id="task-checkbox" name="task-checkbox" class="task-checkbox" checked><p id="${task.ID}" class="task-item" data-list-group="${task.group_list}"> ${task.Task}</p>
                             </div>`;
@@ -103,9 +106,52 @@ function getTask(){
                             
                             completedBtn.classList.remove("hide");
                             completedTaskParent.classList.remove("hide");
-                            
                         }
-                    }   
+                    }else if(isNum === "number"){
+                       if(request === parseInt(task.group_list)){
+                            const status = parseInt(task.Completed);
+                            if(status === 0){
+                                taskHolder += `<div class="todo-container" id="todo-container"> 
+                                    <input type="checkbox" id="task-checkbox" name="task-checkbox" class="task-checkbox" data-list-group="${task.group_list}"><p id="${task.ID}" class="task-item"> ${task.Task}</p>
+                                </div>`;
+                                
+                                getTaskContainer.innerHTML = taskHolder;
+                            }else{
+                                completeTask += `<div class="todo-container" id="todo-container"> 
+                                    <input type="checkbox" id="task-checkbox" name="task-checkbox" class="task-checkbox" checked><p id="${task.ID}" class="task-item" data-list-group="${task.group_list}"> ${task.Task}</p>
+                                </div>`;
+
+                                completedTaskContainer.innerHTML = completeTask;
+                                
+                                completedBtn.classList.remove("hide");
+                                completedTaskParent.classList.remove("hide");
+                            }
+                       }
+                    }else {
+                        if(dateCreated === currentDate){
+                            const status = parseInt(task.Completed);
+                            if(status === 0){
+                                taskHolder += `<div class="todo-container" id="todo-container"> 
+                                    <input type="checkbox" id="task-checkbox" name="task-checkbox" class="task-checkbox" data-list-group="${task.group_list}"><p id="${task.ID}" class="task-item"> ${task.Task}</p>
+                                </div>`;
+                                
+                                getTaskContainer.innerHTML = taskHolder;
+                                
+                            }else{
+                                
+                                completeTask += `<div class="todo-container" id="todo-container"> 
+                                    <input type="checkbox" id="task-checkbox" name="task-checkbox" class="task-checkbox" checked><p id="${task.ID}" class="task-item" data-list-group="${task.group_list}"> ${task.Task}</p>
+                                </div>`;
+
+                                completedTaskContainer.innerHTML = completeTask;
+                                
+                                completedBtn.classList.remove("hide");
+                                completedTaskParent.classList.remove("hide");
+                                
+                            }
+                        }  
+                    }
+                     
                 });
                 const numberOfChild = completedTaskContainer.children.length;
                 const numberOfTask = getTaskContainer.children.length;
@@ -185,7 +231,7 @@ function getList(){
             let taskList = "";
             data.forEach(taskL => {
                 taskList = `<div class="task-list-content" id="taskListContent">
-                    <p id="${taskL.ID}">${taskL.List}</p>
+                    <p class="listContent" id="${taskL.ID}">${taskL.List}</p>
                 </div>`
 
                 taskListContainer.innerHTML += taskList;
@@ -512,40 +558,45 @@ listModal.addEventListener("click", (event) => {
 
 taskListContainer.addEventListener("click", (event) => {
     const listOption = event.target.closest(".task-list-content");
-    const p = listOption.querySelector("p");
+    const p = listOption.querySelector(".listContent");
     const listId = parseInt(p.id);
 
     if(listOption){
-        fetch('phpscript/getTask.php')
-        .then(response => {
-            if(!response.ok){
-                throw new Error('network not response')
-            }
-            return response.json();
-        })
-        .then(data => {
-            let unfinishTask = "";
-            let completedTask = "";
-            data.forEach(task => {
-                const listTaskId = parseInt(task.group_list);
-                if(listId === listTaskId){
-                    const status = parseInt(task.Completed);
-                    if(status === 0){
-                        unfinishTask += `<div class="todo-container" id="todo-container"> 
-                            <input type="checkbox" id="task-checkbox" name="task-checkbox" class="task-checkbox" data-list-group="${task.group_list}"><p id="${task.ID}" class="task-item"> ${task.Task}</p>
-                        </div>`;
-                        getTaskContainer.innerHTML = unfinishTask;
-                    }else{
-                        completedTask += `<div class="todo-container" id="todo-container"> 
-                            <input type="checkbox" id="task-checkbox" name="task-checkbox" class="task-checkbox" checked><p id="${task.ID}" class="task-item" data-list-group="${task.group_list}"> ${task.Task}</p>
-                        </div>`;
-                        completedTaskContainer.innerHTML = completedTask;
-                    }
-                }
+        getTask(listId);
+        // fetch('phpscript/getTask.php')
+        // .then(response => {
+        //     if(!response.ok){
+        //         throw new Error('network not response')
+        //     }
+        //     return response.json();
+        // })
+        // .then(data => {
+        //     let unfinishTask = "";
+        //     let completedTask = "";
+        //     data.forEach(task => {
+        //         const listTaskId = parseInt(task.group_list);
                 
-            });
+        //         if(data.length === 0){
+        //             getTaskContainer.innerHTML = "No task";
+        //         }else{
+        //             if(listId === listTaskId){
+        //                 const status = parseInt(task.Completed);
+        //                 if(status === 0){
+        //                     unfinishTask += `<div class="todo-container" id="todo-container"> 
+        //                         <input type="checkbox" id="task-checkbox" name="task-checkbox" class="task-checkbox" data-list-group="${task.group_list}"><p id="${task.ID}" class="task-item"> ${task.Task}</p>
+        //                     </div>`;
+        //                     getTaskContainer.innerHTML = unfinishTask;
+        //                 }else{
+        //                     completedTask += `<div class="todo-container" id="todo-container"> 
+        //                         <input type="checkbox" id="task-checkbox" name="task-checkbox" class="task-checkbox" checked><p id="${task.ID}" class="task-item" data-list-group="${task.group_list}"> ${task.Task}</p>
+        //                     </div>`;
+        //                     completedTaskContainer.innerHTML = completedTask;
+        //                 }
+        //             }
+        //         }
+        //     });
             
-        })
+        // })
     }
 })
 
@@ -647,4 +698,13 @@ completedBtn.addEventListener("click", () => {
         completedTaskParent.classList.remove("hide");
         isHide = false;
     }
+})
+
+// click on r-side-menu
+allTask.addEventListener("click", () => {
+    getTask("all task");
+})
+
+myDayTask.addEventListener("click", () => {
+    getTask("my day");
 })
